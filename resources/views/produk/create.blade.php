@@ -6,7 +6,7 @@
  
 @section('content')
     <div class="row">
-        <div class="col-xl-6 col-lg-8">
+        <div class="col-xl-8 col-lg-12">
             <form method="POST" action="{{ route('produk.store') }}" class="card card-orange card-outline">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -49,69 +49,111 @@
                         <x-input name="nama_produk" type="text" placeholder="Masukkan nama produk" required />
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="harga">Harga Produk <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Rp</span>
-                                    </div>
-                                    <input type="text" name="harga" id="harga" 
-                                           class="form-control @error('harga') is-invalid @enderror" 
-                                           placeholder="Contoh: 5.000" 
-                                           value="{{ old('harga') }}"
-                                           required>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">.00</span>
-                                    </div>
-                                </div>
-                                @error('harga')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <small class="text-muted">
-                                    <i class="fas fa-info-circle"></i>
-                                    Format otomatis akan ditambahkan (titik pemisah ribuan)
-                                </small>
-                            </div>
+                    <!-- Section Harga dan Margin -->
+                    <div class="card bg-light mt-3">
+                        <div class="card-header py-2">
+                            <h6 class="mb-0"><i class="fas fa-calculator mr-2"></i>Perhitungan Harga & Margin</h6>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="diskon">Diskon (%)</label>
-                                <div class="input-group">
-                                    <input type="number" name="diskon" id="diskon"
-                                           class="form-control @error('diskon') is-invalid @enderror" 
-                                           placeholder="0" min="0" max="100" step="1"
-                                           value="{{ old('diskon', 0) }}">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">%</span>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="harga_beli">Harga Beli (dari Supplier) <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Rp</span>
+                                            </div>
+                                            <input type="text" name="harga_beli" id="harga_beli" 
+                                                   class="form-control @error('harga_beli') is-invalid @enderror" 
+                                                   placeholder="Contoh: 5.000" 
+                                                   value="{{ old('harga_beli') }}"
+                                                   required>
+                                        </div>
+                                        @error('harga_beli')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        <small class="text-muted">Harga pembelian dari supplier</small>
                                     </div>
                                 </div>
-                                @error('diskon')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <small class="text-muted">0-100 untuk persentase diskon</small>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="harga_jual">Harga Jual (yang diinginkan) <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Rp</span>
+                                            </div>
+                                            <input type="text" name="harga_jual" id="harga_jual" 
+                                                   class="form-control @error('harga_jual') is-invalid @enderror" 
+                                                   placeholder="Contoh: 7.000" 
+                                                   value="{{ old('harga_jual') }}"
+                                                   required>
+                                        </div>
+                                        @error('harga_jual')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        <small class="text-muted">Harga jual sebelum diskon</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="diskon">Diskon (%)</label>
+                                        <div class="input-group">
+                                            <input type="number" name="diskon" id="diskon"
+                                                   class="form-control @error('diskon') is-invalid @enderror" 
+                                                   placeholder="0" min="0" max="100" step="1"
+                                                   value="{{ old('diskon', 0) }}">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                        @error('diskon')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        <small class="text-muted">0-100 untuk persentase diskon</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <!-- Preview Margin akan ditampilkan di sini -->
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Preview Harga -->
-                    <div class="form-group">
-                        <div class="card bg-light">
-                            <div class="card-body py-2">
-                                <div class="row text-sm">
-                                    <div class="col-4">
-                                        <strong>Harga Asli:</strong><br>
-                                        <span id="harga-preview">Rp 0</span>
-                                    </div>
-                                    <div class="col-4">
-                                        <strong>Diskon:</strong><br>
-                                        <span id="diskon-preview">0%</span>
-                                    </div>
-                                    <div class="col-4">
-                                        <strong>Harga Jual:</strong><br>
-                                        <span id="harga-jual-preview" class="text-success font-weight-bold">Rp 0</span>
-                                    </div>
+                    <!-- Preview Perhitungan -->
+                    <div class="card bg-info mt-3">
+                        <div class="card-header py-2">
+                            <h6 class="mb-0 text-white"><i class="fas fa-chart-line mr-2"></i>Analisis Keuntungan</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-sm">
+                                <div class="col-md-3">
+                                    <strong class="text-white">Harga Beli:</strong><br>
+                                    <span id="harga-beli-preview" class="text-white">Rp 0</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong class="text-white">Harga Jual:</strong><br>
+                                    <span id="harga-jual-preview" class="text-white">Rp 0</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong class="text-white">Harga Final:</strong><br>
+                                    <span id="harga-final-preview" class="text-white">Rp 0</span>
+                                    <br><small id="diskon-preview" class="text-light">Diskon: 0%</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong class="text-white">Margin Keuntungan:</strong><br>
+                                    <span id="margin-rupiah-preview" class="text-white">Rp 0</span>
+                                    <br><span id="margin-persen-preview" class="badge badge-light">0%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Margin -->
+                            <div class="mt-3">
+                                <div id="margin-status" class="alert alert-light mb-0" style="display: none;">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    <span id="margin-message"></span>
                                 </div>
                             </div>
                         </div>
@@ -138,33 +180,44 @@
         </div>
         
         <!-- Help Panel -->
-        <div class="col-xl-6 col-lg-4">
-            <div class="card card-info card-outline">
+        <div class="col-xl-4 col-lg-12">
+            <div class="card card-success card-outline">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <i class="fas fa-question-circle mr-2"></i>
-                        Panduan Pengisian
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        Tips Perhitungan Margin
                     </h3>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <h6><i class="fas fa-barcode mr-2"></i>Kode Produk</h6>
+                        <h6><i class="fas fa-shopping-cart mr-2"></i>Harga Beli</h6>
                         <p class="text-muted small">
-                            Masukkan kode unik untuk produk. Contoh: P001, PROD001, SKU001
+                            Masukkan harga pembelian dari supplier. Ini adalah modal yang Anda keluarkan.
                         </p>
                     </div>
                     <div class="mb-3">
-                        <h6><i class="fas fa-money-bill mr-2"></i>Harga Produk</h6>
+                        <h6><i class="fas fa-tag mr-2"></i>Harga Jual</h6>
                         <p class="text-muted small">
-                            Masukkan harga dalam format angka. Sistem akan otomatis menambahkan 
-                            format rupiah dengan pemisah titik. Contoh: 5000 → 5.000
+                            Tentukan harga jual yang diinginkan sebelum diskon. Sistem akan menghitung margin otomatis.
                         </p>
                     </div>
                     <div class="mb-3">
-                        <h6><i class="fas fa-percentage mr-2"></i>Diskon</h6>
+                        <h6><i class="fas fa-percentage mr-2"></i>Margin Keuntungan</h6>
                         <p class="text-muted small">
-                            Masukkan persentase diskon (0-100). Harga jual akan dihitung otomatis.
+                            Dihitung otomatis berdasarkan selisih harga jual final dengan harga beli.
                         </p>
+                        <ul class="small text-muted">
+                            <li><span class="text-success">Hijau</span>: Margin > 20%</li>
+                            <li><span class="text-warning">Kuning</span>: Margin 10-20%</li>
+                            <li><span class="text-danger">Merah</span>: Margin < 10%</li>
+                        </ul>
+                    </div>
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-calculator mr-1"></i>
+                            <strong>Rumus:</strong><br>
+                            Margin = (Harga Final - Harga Beli) / Harga Beli × 100%
+                        </small>
                     </div>
                 </div>
             </div>
@@ -174,38 +227,30 @@
 @push('scripts')
 <script>
 function formatRupiah(input) {
-    // Simpan posisi cursor
     let start = input.selectionStart;
     let end = input.selectionEnd;
     
-    // Ambil nilai dan hapus semua karakter non-digit
     let value = input.value.replace(/[^\d]/g, '');
     
-    // Jika kosong, biarkan kosong
     if (!value) {
         input.value = '';
         updatePreview();
         return;
     }
     
-    // Format dengan titik sebagai pemisah ribuan
     let formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     
-    // Hitung perubahan panjang untuk adjust cursor
     let oldLength = input.value.length;
     input.value = formattedValue;
     let newLength = formattedValue.length;
     let lengthDiff = newLength - oldLength;
     
-    // Set posisi cursor yang baru
     let newStart = start + lengthDiff;
     let newEnd = end + lengthDiff;
     
-    // Pastikan cursor tidak keluar batas
     newStart = Math.max(0, Math.min(newStart, newLength));
     newEnd = Math.max(0, Math.min(newEnd, newLength));
     
-    // Set selection range
     setTimeout(() => {
         input.setSelectionRange(newStart, newEnd);
         updatePreview();
@@ -213,7 +258,6 @@ function formatRupiah(input) {
 }
 
 function formatInitialValue(input) {
-    // Khusus untuk format nilai awal dari database
     let value = input.value.replace(/[^\d]/g, '');
     if (value && value !== '0') {
         input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -222,68 +266,96 @@ function formatInitialValue(input) {
 }
 
 function updatePreview() {
-    const hargaInput = document.getElementById('harga');
+    const hargaBeliInput = document.getElementById('harga_beli');
+    const hargaJualInput = document.getElementById('harga_jual');
     const diskonInput = document.getElementById('diskon');
     
-    const harga = parseInt(hargaInput.value.replace(/\./g, '')) || 0;
+    const hargaBeli = parseInt(hargaBeliInput.value.replace(/\./g, '')) || 0;
+    const hargaJual = parseInt(hargaJualInput.value.replace(/\./g, '')) || 0;
     const diskon = parseInt(diskonInput.value) || 0;
     
-    const hargaJual = harga - (harga * diskon / 100);
+    const hargaFinal = hargaJual - (hargaJual * diskon / 100);
+    const marginRupiah = hargaFinal - hargaBeli;
+    const marginPersen = hargaBeli > 0 ? (marginRupiah / hargaBeli * 100) : 0;
     
-    document.getElementById('harga-preview').textContent = 'Rp ' + harga.toLocaleString('id-ID');
-    document.getElementById('diskon-preview').textContent = diskon + '%';
+    // Update preview
+    document.getElementById('harga-beli-preview').textContent = 'Rp ' + hargaBeli.toLocaleString('id-ID');
     document.getElementById('harga-jual-preview').textContent = 'Rp ' + hargaJual.toLocaleString('id-ID');
+    document.getElementById('harga-final-preview').textContent = 'Rp ' + hargaFinal.toLocaleString('id-ID');
+    document.getElementById('diskon-preview').textContent = 'Diskon: ' + diskon + '%';
+    document.getElementById('margin-rupiah-preview').textContent = 'Rp ' + marginRupiah.toLocaleString('id-ID');
+    
+    const marginBadge = document.getElementById('margin-persen-preview');
+    marginBadge.textContent = marginPersen.toFixed(2) + '%';
+    
+    // Status margin dengan warna
+    const marginStatus = document.getElementById('margin-status');
+    const marginMessage = document.getElementById('margin-message');
+    
+    if (hargaBeli > 0 && hargaJual > 0) {
+        marginStatus.style.display = 'block';
+        
+        if (marginPersen >= 20) {
+            marginBadge.className = 'badge badge-success';
+            marginStatus.className = 'alert alert-success mb-0';
+            marginMessage.innerHTML = '<strong>Margin Baik!</strong> Keuntungan sangat menguntungkan.';
+        } else if (marginPersen >= 10) {
+            marginBadge.className = 'badge badge-warning';
+            marginStatus.className = 'alert alert-warning mb-0';
+            marginMessage.innerHTML = '<strong>Margin Cukup.</strong> Keuntungan masih dalam batas wajar.';
+        } else if (marginPersen >= 0) {
+            marginBadge.className = 'badge badge-danger';
+            marginStatus.className = 'alert alert-danger mb-0';
+            marginMessage.innerHTML = '<strong>Margin Rendah!</strong> Pertimbangkan untuk menaikkan harga jual.';
+        } else {
+            marginBadge.className = 'badge badge-dark';
+            marginStatus.className = 'alert alert-danger mb-0';
+            marginMessage.innerHTML = '<strong>Rugi!</strong> Harga jual lebih rendah dari harga beli.';
+        }
+    } else {
+        marginStatus.style.display = 'none';
+        marginBadge.className = 'badge badge-light';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const hargaInput = document.getElementById('harga');
+    const hargaBeliInput = document.getElementById('harga_beli');
+    const hargaJualInput = document.getElementById('harga_jual');
     const diskonInput = document.getElementById('diskon');
     
-    if (hargaInput) {
-        // Format nilai awal jika ada (dari old value)
-        if (hargaInput.value) {
-            formatInitialValue(hargaInput);
-        }
-        
-        // Event listener untuk input
-        hargaInput.addEventListener('input', function(e) {
-            formatRupiah(this);
-        });
-        
-        // Event listener untuk keydown (handle backspace, delete, etc)
-        hargaInput.addEventListener('keydown', function(e) {
-            // Allow: backspace, delete, tab, escape, enter
-            if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
-                // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+Z
-                (e.keyCode === 65 && e.ctrlKey === true) ||
-                (e.keyCode === 67 && e.ctrlKey === true) ||
-                (e.keyCode === 86 && e.ctrlKey === true) ||
-                (e.keyCode === 88 && e.ctrlKey === true) ||
-                (e.keyCode === 90 && e.ctrlKey === true) ||
-                // Allow: home, end, left, right, down, up
-                (e.keyCode >= 35 && e.keyCode <= 40)) {
-                return;
+    // Setup untuk kedua input harga
+    [hargaBeliInput, hargaJualInput].forEach(input => {
+        if (input) {
+            if (input.value) {
+                formatInitialValue(input);
             }
-            // Ensure that it is a number and stop the keypress
-            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-                e.preventDefault();
-            }
-        });
-        
-        // Event paste handling
-        hargaInput.addEventListener('paste', function(e) {
-            setTimeout(() => {
+            
+            input.addEventListener('input', function(e) {
                 formatRupiah(this);
-            }, 10);
-        });
-        
-        // Event focus
-        hargaInput.addEventListener('focus', function(e) {
-            if (this.value === '') {
-                this.placeholder = 'Contoh: 5000';
-            }
-        });
-    }
+            });
+            
+            input.addEventListener('keydown', function(e) {
+                if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
+                    (e.keyCode === 65 && e.ctrlKey === true) ||
+                    (e.keyCode === 67 && e.ctrlKey === true) ||
+                    (e.keyCode === 86 && e.ctrlKey === true) ||
+                    (e.keyCode === 88 && e.ctrlKey === true) ||
+                    (e.keyCode === 90 && e.ctrlKey === true) ||
+                    (e.keyCode >= 35 && e.keyCode <= 40)) {
+                    return;
+                }
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+            
+            input.addEventListener('paste', function(e) {
+                setTimeout(() => {
+                    formatRupiah(this);
+                }, 10);
+            });
+        }
+    });
     
     // Update preview saat diskon berubah
     if (diskonInput) {
@@ -295,33 +367,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     if (form) {
         form.addEventListener('submit', function(e) {
-            const hargaInput = document.getElementById('harga');
-            if (hargaInput && hargaInput.value) {
-                // Buat hidden input dengan nilai bersih (tanpa titik)
-                let cleanValue = hargaInput.value.replace(/\./g, '');
-                
-                // Pastikan ada nilai numerik
-                if (cleanValue && cleanValue !== '0') {
-                    let hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'harga';
-                    hiddenInput.value = cleanValue;
-                    
-                    // Hapus name dari input display agar tidak conflict
-                    hargaInput.removeAttribute('name');
-                    
-                    // Tambahkan hidden input ke form
-                    form.appendChild(hiddenInput);
-                } else {
-                    // Jika kosong, set nilai 0
-                    let hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'harga';
-                    hiddenInput.value = '0';
-                    
-                    hargaInput.removeAttribute('name');
-                    form.appendChild(hiddenInput);
-                }
+            // Handle harga_beli
+            if (hargaBeliInput && hargaBeliInput.value) {
+                let cleanValue = hargaBeliInput.value.replace(/\./g, '');
+                let hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'harga_beli';
+                hiddenInput.value = cleanValue || '0';
+                hargaBeliInput.removeAttribute('name');
+                form.appendChild(hiddenInput);
+            }
+            
+            // Handle harga_jual
+            if (hargaJualInput && hargaJualInput.value) {
+                let cleanValue = hargaJualInput.value.replace(/\./g, '');
+                let hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'harga_jual';
+                hiddenInput.value = cleanValue || '0';
+                hargaJualInput.removeAttribute('name');
+                form.appendChild(hiddenInput);
             }
         });
     }

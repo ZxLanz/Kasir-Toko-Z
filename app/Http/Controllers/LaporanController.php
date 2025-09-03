@@ -35,29 +35,32 @@ class LaporanController extends Controller
     }
 
     public function bulanan(Request $request)
-    {
-        // Hitung per tanggal, tapi exclude transaksi yang dibatalkan
-        $penjualan = Penjualan::select(
-            DB::raw('COUNT(CASE WHEN status != "batal" THEN id END) as jumlah_transaksi'),
-            DB::raw('SUM(CASE WHEN status != "batal" THEN total ELSE 0 END) as jumlah_total'),
-            DB::raw("DATE_FORMAT(tanggal, '%d/%m/%Y') tgl")
-        )
-            ->whereMonth('tanggal', $request->bulan)
-            ->whereYear('tanggal', $request->tahun)
-            ->groupBy('tgl')
-            ->having('jumlah_transaksi', '>', 0) // Hanya tampilkan hari yang ada transaksi valid
-            ->get();
+{
+    // Hitung per tanggal dengan pemisahan transaksi berhasil dan dibatalkan
+    $penjualan = Penjualan::select(
+        DB::raw('COUNT(CASE WHEN status != "batal" THEN id END) as jumlah_transaksi_berhasil'),
+        DB::raw('COUNT(CASE WHEN status = "batal" THEN id END) as jumlah_transaksi_batal'),
+        DB::raw('COUNT(id) as total_transaksi'),
+        DB::raw('SUM(CASE WHEN status != "batal" THEN total ELSE 0 END) as jumlah_total'),
+        DB::raw("DATE_FORMAT(tanggal, '%d/%m/%Y') tgl")
+    )
+        ->whereMonth('tanggal', $request->bulan)
+        ->whereYear('tanggal', $request->tahun)
+        ->groupBy('tgl')
+        ->having(DB::raw('COUNT(id)'), '>', 0) // Tampilkan semua hari yang ada transaksi
+        ->orderBy(DB::raw('DATE(tanggal)'))
+        ->get();
 
-        $nama_bulan = [
-            'Januari', 'Februari', 'Maret', 'April', 'Mei',
-            'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-        ];
+    $nama_bulan = [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei',
+        'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
 
-        $bulan = isset($nama_bulan[$request->bulan - 1]) ? $nama_bulan[$request->bulan - 1] : null;
+    $bulan = isset($nama_bulan[$request->bulan - 1]) ? $nama_bulan[$request->bulan - 1] : null;
 
-        return view('laporan.bulanan', [
-            'penjualan' => $penjualan,
-            'bulan' => $bulan
-        ]);
-    }
+    return view('laporan.bulanan', [
+        'penjualan' => $penjualan,
+        'bulan' => $bulan
+    ]);
+}
 }

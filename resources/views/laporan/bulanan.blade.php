@@ -9,7 +9,8 @@
         <tr>
             <th>No</th>
             <th>Tanggal</th>
-            <th>Jumlah Transaksi</th>
+            <th>Transaksi Berhasil</th>
+            <th>Transaksi Dibatalkan</th>
             <th>Total</th>
         </tr>
     </thead>
@@ -18,19 +19,22 @@
         <tr>
             <td>{{ $key + 1}}</td>
             <td>{{ $row->tgl }}</td>
-            <td>{{ $row->jumlah_transaksi }}</td>
-            <td>{{ number_format($row->jumlah_total, 0, ',', '.') }}</td>
+            <td>{{ $row->jumlah_transaksi_berhasil }}</td>
+            <td>{{ $row->jumlah_transaksi_batal }}</td>
+            <td>Rp {{ number_format($row->jumlah_total, 0, ',', '.') }}</td>
         </tr>
         @endforeach
     </tbody>
     <tfoot>
         <tr>
-            <th colspan="3">
-                Jumlah Total
-            </th>
-            <th>
-                {{ number_format($penjualan->sum('jumlah_total'), 0, ',', '.') }}
-            </th>
+            <th colspan="2">Jumlah Total</th>
+            <th>{{ $penjualan->sum('jumlah_transaksi_berhasil') }}</th>
+            <th>{{ $penjualan->sum('jumlah_transaksi_batal') }}</th>
+            <th>{{ $penjualan->sum('total_transaksi') }}</th>
+        </tr>
+        <tr>
+            <th colspan="4">Total Pendapatan</th>
+            <th>Rp {{ number_format($penjualan->sum('jumlah_total'), 0, ',', '.') }}</th>
         </tr>
     </tfoot>
 </table>

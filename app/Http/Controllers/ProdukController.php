@@ -45,19 +45,28 @@ class ProdukController extends Controller
         'diskon'=>['required','between:0,100'],
         'kode_produk' => ['required', 'max:250', 'unique:produks'],
         'nama_produk' => ['required', 'max:150'],
-        'harga' => ['required', 'min:0'],
+        'harga_beli' => ['required', 'min:0'], // Harga dari supplier
+        'harga_jual' => ['required', 'min:0'], // Harga jual yang diinginkan
         'kategori_id' => ['required', 'exists:kategoris,id'],
     ]);
 
-    // Bersihkan titik dari harga input terlebih dahulu
-    $harga_bersih = (float) str_replace('.', '', $request->harga);
+    // Bersihkan titik dari harga input
+    $harga_beli_bersih = (float) str_replace('.', '', $request->harga_beli);
+    $harga_jual_bersih = (float) str_replace('.', '', $request->harga_jual);
     
     // Hitung harga setelah diskon
-    $harga_jual = $harga_bersih - ($harga_bersih * $request->diskon / 100);
+    $harga_final = $harga_jual_bersih - ($harga_jual_bersih * $request->diskon / 100);
+    
+    // Hitung margin keuntungan
+    $margin_rupiah = $harga_final - $harga_beli_bersih;
+    $margin_persen = $harga_beli_bersih > 0 ? ($margin_rupiah / $harga_beli_bersih) * 100 : 0;
 
     $request->merge([
-        'harga_produk' => $harga_bersih,     // Harga asli (tanpa titik)
-        'harga' => $harga_jual,              // Harga jual (tanpa titik)
+        'harga_beli' => $harga_beli_bersih,      // Harga beli dari supplier
+        'harga_produk' => $harga_jual_bersih,   // Harga jual sebelum diskon
+        'harga' => $harga_final,                // Harga final setelah diskon
+        'margin_rupiah' => $margin_rupiah,      // Margin dalam rupiah
+        'margin_persen' => round($margin_persen, 2), // Margin dalam persen
     ]);
 
     Produk::create($request->all());
@@ -83,18 +92,27 @@ class ProdukController extends Controller
         'diskon'=>['required','between:0,100'],
         'kode_produk' => ['required', 'max:250', 'unique:produks,kode_produk,' . $produk->id],
         'nama_produk' => ['required', 'max:150'],
-        'harga' => ['required', 'min:0'],
+        'harga_beli' => ['required', 'min:0'], // Harga dari supplier
+        'harga_jual' => ['required', 'min:0'], // Harga jual yang diinginkan
     ]);
 
-    // Bersihkan titik dari harga input terlebih dahulu
-    $harga_bersih = (float) str_replace('.', '', $request->harga);
+    // Bersihkan titik dari harga input
+    $harga_beli_bersih = (float) str_replace('.', '', $request->harga_beli);
+    $harga_jual_bersih = (float) str_replace('.', '', $request->harga_jual);
     
     // Hitung harga setelah diskon
-    $harga_jual = $harga_bersih - ($harga_bersih * $request->diskon / 100);
+    $harga_final = $harga_jual_bersih - ($harga_jual_bersih * $request->diskon / 100);
+    
+    // Hitung margin keuntungan
+    $margin_rupiah = $harga_final - $harga_beli_bersih;
+    $margin_persen = $harga_beli_bersih > 0 ? ($margin_rupiah / $harga_beli_bersih) * 100 : 0;
 
     $request->merge([
-        'harga_produk' => $harga_bersih,     // Harga asli (tanpa titik)
-        'harga' => $harga_jual,              // Harga jual (tanpa titik)
+        'harga_beli' => $harga_beli_bersih,      // Harga beli dari supplier
+        'harga_produk' => $harga_jual_bersih,   // Harga jual sebelum diskon
+        'harga' => $harga_final,                // Harga final setelah diskon
+        'margin_rupiah' => $margin_rupiah,      // Margin dalam rupiah
+        'margin_persen' => round($margin_persen, 2), // Margin dalam persen
     ]);
 
     $produk->update($request->all());

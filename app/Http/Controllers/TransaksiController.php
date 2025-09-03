@@ -200,6 +200,22 @@ class TransaksiController extends Controller
         return response()->json($produks);
     }
 
+    public function produkWithStok(Request $request)
+    {
+        $search = $request->search;
+        $produks = Produk::select('id', 'kode_produk', 'nama_produk', 'stok')
+            ->when($search, function ($q, $search) {
+                return $q->where('nama_produk', 'like', "%{$search}%")
+                        ->orWhere('kode_produk', 'like', "%{$search}%");
+            }) 
+            ->orderBy('nama_produk')
+            ->take(15)
+            ->get();
+
+        return response()->json($produks);
+    }
+
+
     public function pelanggan (Request $request)
     {
         $search = $request->search;
@@ -274,3 +290,4 @@ class TransaksiController extends Controller
         ]);
     }
 }
+
